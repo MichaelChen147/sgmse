@@ -2,7 +2,7 @@ import argparse
 from argparse import ArgumentParser
 
 import pytorch_lightning as pl
-from pytorch_lightning.plugins import DDPPlugin
+#from pytorch_lightning.plugins import DDPPlugin
 from pytorch_lightning.loggers import WandbLogger, TensorBoardLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
 
@@ -79,9 +79,15 @@ if __name__ == '__main__':
           callbacks += [checkpoint_callback_pesq, checkpoint_callback_si_sdr]
 
      # Initialize the Trainer and the DataModule
+     # trainer = pl.Trainer.from_argparse_args(
+     #      arg_groups['pl.Trainer'],
+     #      strategy=DDPPlugin(find_unused_parameters=False), logger=logger,
+     #      log_every_n_steps=10, num_sanity_val_steps=0,
+     #      callbacks=callbacks
+     # )
      trainer = pl.Trainer.from_argparse_args(
           arg_groups['pl.Trainer'],
-          strategy=DDPPlugin(find_unused_parameters=False), logger=logger,
+          strategy="ddp_find_unused_parameters_false", logger=logger,
           log_every_n_steps=10, num_sanity_val_steps=0,
           callbacks=callbacks
      )
