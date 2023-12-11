@@ -22,17 +22,17 @@ sr = 16000
 
 if __name__ == '__main__':
     parser = ArgumentParser()
-    parser.add_argument("wsj0", type=str, help='path to WSJ0 directory')
-    parser.add_argument("chime3", type=str,  help='path to CHiME3 directory')
-    parser.add_argument("target", type=str, help='target path for training files')
+    parser.add_argument("--wsj0", type=str, help='path to WSJ0 directory')
+    parser.add_argument("--chime3", type=str,  help='path to CHiME3 directory')
+    parser.add_argument("--target", type=str, help='target path for training files')
     args = parser.parse_args()
 
     # Clean speech for training
-    train_speech_files = sorted(glob(args.wsj0 + '**/si_tr_s/**/*.wav', recursive=True))
-    valid_speech_files = sorted(glob(args.wsj0 + '**/si_dt_05/**/*.wav', recursive=True))
-    test_speech_files = sorted(glob(args.wsj0 + '**/si_et_05/**/*.wav', recursive=True))
+    train_speech_files = sorted(glob(args.wsj0 + '/si_tr_s/**/*.wav', recursive=True))
+    valid_speech_files = sorted(glob(args.wsj0 + '/si_dt_05/**/*.wav', recursive=True))
+    test_speech_files = sorted(glob(args.wsj0 + '/si_et_05/**/*.wav', recursive=True))
 
-    noise_files = glob(args.chime3 + '**/backgrounds/*.wav', recursive=True)
+    noise_files = glob(args.chime3 + '/backgrounds/*.wav', recursive=True)
     noise_files = [file for file in noise_files if (file[-7:-4] == "CH1")]
 
     # Load CHiME3 noise files
@@ -79,7 +79,10 @@ if __name__ == '__main__':
         n = n * np.sqrt(k)
         x = s + n
 
-        file_name = speech_file.split('/')[-1]
+        # file_name = speech_file.split('/')[-1]
+        file_name, file_extension = os.path.splitext(speech_file.split('/')[-1])
+        file_name += f"_snr={snr_dB:.1f}{file_extension}"
+
         write(os.path.join(train_clean_path, file_name), s, sr)
         write(os.path.join(train_noisy_path, file_name), x, sr)
 
@@ -102,7 +105,10 @@ if __name__ == '__main__':
         n = n * np.sqrt(k)
         x = s + n
 
-        file_name = speech_file.split('/')[-1]
+        #file_name = speech_file.split('/')[-1]
+        file_name, file_extension = os.path.splitext(speech_file.split('/')[-1])
+        file_name += f"_snr={snr_dB:.1f}{file_extension}"
+
         write(os.path.join(valid_clean_path, file_name), s, sr)
         write(os.path.join(valid_noisy_path, file_name), x, sr)
 
@@ -125,6 +131,9 @@ if __name__ == '__main__':
         n = n * np.sqrt(k)
         x = s + n
 
-        file_name = speech_file.split('/')[-1]
+        # file_name = speech_file.split('/')[-1]
+        file_name, file_extension = os.path.splitext(speech_file.split('/')[-1])
+        file_name += f"_snr={snr_dB:.1f}{file_extension}"
+
         write(os.path.join(test_clean_path, file_name), s, sr)
         write(os.path.join(test_noisy_path, file_name), x, sr)
